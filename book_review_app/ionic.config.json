@@ -1,0 +1,7 @@
+{
+  "name": "book_review_app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
