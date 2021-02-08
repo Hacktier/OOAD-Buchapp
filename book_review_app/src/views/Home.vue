@@ -8,20 +8,19 @@
 
     <ion-content>
       <ion-list>
-        <ion-item :router-link="book.showRoute" v-for="book in books" :key="book.title">
+        <ion-item :router-link="book.detailRoute" v-for="book in books" :key="book.title">
           <ion-label>
             <h2 v-text="book.title"></h2>
             <ion-note>ISBN: 9780439554930</ion-note>
           </ion-label>
           <ion-badge :color="book.labelColor" slot="end">
-            {{ book.rating }}/10
+            {{ book.finishedReading }}
           </ion-badge>
         </ion-item>
       </ion-list>
-      <ion-fab vertical="bottom" horizontal="center" slot="fixed" router-link='/store'>
+      <ion-fab vertical="bottom" horizontal="center" slot="fixed" router-link='/add'>
         <ion-fab-button>
-<!--          <ion-icon name="add"></ion-icon>-->
-          +
+          <ion-icon icon="add"/>
         </ion-fab-button>
       </ion-fab>
     </ion-content>
@@ -41,12 +40,18 @@ import {
   IonNote,
   IonBadge,
   IonList,
-  // IonIcon,
+  IonIcon,
   IonFab,
-  IonFabButton
+  IonFabButton,
 } from '@ionic/vue';
 
 import {defineComponent} from 'vue';
+import { addIcons } from 'ionicons'
+import { add, cartOutline } from 'ionicons/icons'
+addIcons({ add, "cart-outline": cartOutline })
+
+import BookStorage from "@/service/BookStorage"
+import BookFactory from "@/factories/BookFactory";
 import Book from "@/model/Book";
 
 export default defineComponent({
@@ -62,20 +67,28 @@ export default defineComponent({
     IonNote,
     IonBadge,
     IonList,
-    // IonIcon,
+    IonIcon,
     IonFab,
-    IonFabButton
+    IonFabButton,
   },
 
   data: () => ({
-    books: [
-      new Book('Buch 1', 2),
-      new Book('Another Book', 8),
-      new Book('Another Book 2', 6),
-      new Book('Harry Potter', 9),
-      new Book('Harry Potter', 9),
-    ]
-  })
+    books: [] as Book[],
+  }),
+
+  async created() {
+    const storage = new BookStorage()
+    const factory = new BookFactory();
+
+    storage.getKeys().then(ids => {
+      for (const id of ids.keys) {
+        storage.getData(id).then(bookRaw => {
+          const book = JSON.parse(bookRaw.value ?? '');
+          this.books.push(factory.createFromJson(book));
+        })
+      }
+    })
+  }
 });
 </script>
 

@@ -1,27 +1,43 @@
-export default class Book {
-    public id: number;
-    public title: string;
-    public rating: number;
+interface BookInterface {
+    id: string;
+    title: string | null;
+    rating: number | null;
+    finished: boolean;
+}
 
-    constructor(title: string, rating: number) {
-        this.id = 1;
+export {BookInterface};
+
+export default class Book implements BookInterface {
+    public id: string;
+    public title: string | null;
+    public rating: number | null;
+    public finished: boolean;
+
+    constructor(id: string, title: string | null, rating: number | null, finished: boolean) {
+        this.id = id;
         this.title = title;
         this.rating = rating;
+        this.finished = finished;
+    }
+
+    get finishedReading(): string {
+        if (this.finished) {
+            return "finished";
+        }
+
+        return "unfinished"
     }
 
     get labelColor(): string {
-        if (this.rating > 7) {
+
+        if (this.finished) {
             return 'success';
         }
 
-        if (this.rating < 4) {
-            return 'danger'
-        }
-
-        return 'warning';
+        return 'primary';
     }
 
-    get showRoute() {
-        return '/show/' + this.rating;
+    get detailRoute() {
+        return '/detail/' + this.id;
     }
 }
