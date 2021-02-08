@@ -2,31 +2,29 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button></ion-back-button>
+        </ion-buttons>
         <ion-title>Detail View</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
+    <ion-content v-if="book">
       <ion-list>
         <ion-item>
           <ion-label>
-            Title: Harry Potter
+            {{ book.title }}
           </ion-label>
 
         </ion-item>
         <ion-item>
           <ion-label>
-            ISBN: 9780439554930
+            ISBN:
           </ion-label>
         </ion-item>
         <ion-item>
           <ion-label>
-            Number of Pages: 336
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            Release Date: 26.06.1997
+            Number of Pages:
           </ion-label>
         </ion-item>
         <ion-item>
@@ -35,26 +33,41 @@
           </ion-label>
         </ion-item>
         <ion-item>
-          Harry Potter, an eleven-year-old orphan, discovers that he is a wizard and is invited to study at Hogwarts.
-          Even as he escapes a dreary life and enters a world of magic, he finds trouble awaiting him.
+          Summary
         </ion-item>
       </ion-list>
     </ion-content>
+
+    <ion-footer v-if="book">
+      <ion-button expand="block" :color="book.labelColor" v-on:click="changeState">{{
+          book.finishedReading
+        }}
+      </ion-button>
+      <ion-button expand="block" color="danger" v-on:click="deleteBook" router-link='/home' >Delete</ion-button>
+    </ion-footer>
   </ion-page>
 </template>
 
 <script lang="ts">
+
 import {
   IonContent,
   IonHeader,
+  IonItem,
+  IonLabel,
+  IonList,
   IonPage,
   IonTitle,
   IonToolbar,
-  IonLabel,
-  IonItem,
-  IonList
+  IonButton,
+  IonFooter,
+  IonBackButton,
+  IonButtons
 } from '@ionic/vue';
 import {defineComponent} from 'vue';
+import BookStorage from "@/service/BookStorage"
+import Book from "@/model/Book";
+import BookFactory from "@/factories/BookFactory";
 
 export default defineComponent({
   name: 'Detail',
@@ -66,8 +79,49 @@ export default defineComponent({
     IonToolbar,
     IonLabel,
     IonItem,
-    IonList
+    IonList,
+    IonButton,
+    IonFooter,
+    IonBackButton,
+    IonButtons
+  },
+
+  data: () => ({
+    book: null as Book | null,
+    storage: null as BookStorage | null
+  }),
+
+
+  async created() {
+    const id = this.$route.params['id'] as string;
+
+    this.storage = new BookStorage()
+    const bookRaw = await this.storage.getData(id);
+
+    const bookFactory = new BookFactory();
+
+    this.book = bookFactory.createFromJson(JSON.parse(bookRaw.value ?? ''));
+  },
+
+  methods: {
+    deleteBook() {
+      if (!this.storage || !this.book) {
+        return
+      }
+
+      this.storage.deleteData(this.book.id);
+    },
+
+    changeState() {
+      if (!this.storage || !this.book) {
+        return
+      }
+
+      this.book.finished = !this.book.finished;
+      this.storage.setData(this.book.id, this.book)
+    }
   }
+
 });
 </script>
 
