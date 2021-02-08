@@ -18,7 +18,7 @@
           </ion-badge>
         </ion-item>
       </ion-list>
-      <ion-fab vertical="bottom" horizontal="center" slot="fixed" router-link='/store'>
+      <ion-fab vertical="bottom" horizontal="center" slot="fixed" router-link='/add'>
         <ion-fab-button>
 <!--          <ion-icon name="add"></ion-icon>-->
           +
