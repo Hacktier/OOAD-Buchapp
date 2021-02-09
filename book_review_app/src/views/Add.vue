@@ -14,8 +14,8 @@
         <ion-item v-if="books==null">Kein Buch gefunden!</ion-item>
         <ion-item
 
-        v-for="book in books"
-        :key="book.id"
+            v-for="book in books"
+            :key="book.id"
         >
           <ion-thumbnail slot="start">
             <ion-img
@@ -56,6 +56,9 @@ import {
 import axios from 'axios';
 
 import {defineComponent} from 'vue';
+import Book from "@/model/Book";
+import BookStorage from "@/service/BookStorage";
+import {v4 as uuidv4} from "uuid";
 
 export default defineComponent({
   name: 'Add',
@@ -75,33 +78,39 @@ export default defineComponent({
   },
   data() {
     return {
-      enteredBook:"",
-      books: null
+      enteredBook: "",
+      books: null,
+      title: '',
+      id: ''
     };
+  },
+  created() {
+    this.id = uuidv4();
   },
 
   methods: {
-  //  save: function () {
-      // new Book(
-      //     document.getElementById('title').value,
-      //     document.getElementById('rating').value
-      // );
-  //  }
+    save() {
+      const storage = new BookStorage();
+      if (!this.id) {
+        return;
+      }
+      storage.setData(this.id, new Book(this.id, this.title, null, false));
+    },
     resolveBook() {
-      if(this.enteredBook.length<3) {
+      if (this.enteredBook.length < 3) {
         console.log("didn't")
         this.books = null
         return
       }
-        axios
-            .get('https://www.googleapis.com/books/v1/volumes' + '?q=' + this.enteredBook)
-            .then(response => {
-              if(response.status!=200 || response.data.totalItems == 0) {
-                this.books=null
-              } else
-                  this.books = response.data.items
-            })
-            .catch(error => console.log(error))
+      axios
+          .get('https://www.googleapis.com/books/v1/volumes' + '?q=' + this.enteredBook)
+          .then(response => {
+            if (response.status != 200 || response.data.totalItems == 0) {
+              this.books = null
+            } else
+              this.books = response.data.items
+          })
+          .catch(error => console.log(error))
     },
   }
 });
