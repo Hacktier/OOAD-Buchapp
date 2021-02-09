@@ -11,7 +11,7 @@
         <ion-item :router-link="book.detailRoute" v-for="book in books" :key="book.title">
           <ion-label>
             <h2 v-text="book.title"></h2>
-            <ion-note>ISBN: 9780439554930</ion-note>
+            <ion-note>{{ book.subtitle }}</ion-note>
           </ion-label>
           <ion-badge :color="book.labelColor" slot="end">
             {{ book.finishedReading }}

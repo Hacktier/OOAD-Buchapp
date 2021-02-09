@@ -3,7 +3,7 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button></ion-back-button>
+          <ion-back-button default-href="/home"></ion-back-button>
         </ion-buttons>
         <ion-title>Detail View</ion-title>
       </ion-toolbar>
@@ -17,23 +17,18 @@
           </ion-label>
 
         </ion-item>
-        <ion-item>
+        <ion-item v-if="book.subtitle">
           <ion-label>
-            ISBN:
+            {{ book.subtitle }}
           </ion-label>
+        </ion-item>
+        <ion-item v-if="book.description">
+          {{ book.description }}
         </ion-item>
         <ion-item>
           <ion-label>
-            Number of Pages:
+            Rating:
           </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            Rating: 9/10
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          Summary
         </ion-item>
       </ion-list>
     </ion-content>
@@ -119,7 +114,6 @@ export default defineComponent({
       this.storage.setData(this.book.id, this.book)
     }
   }
-
 });
 </script>
 

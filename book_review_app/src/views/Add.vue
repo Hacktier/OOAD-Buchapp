@@ -2,6 +2,9 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button></ion-back-button>
+        </ion-buttons>
         <ion-title>Buch hinzufügen</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -11,12 +14,9 @@
       <ion-searchbar v-model="enteredBook" @ionChange="resolveBook()" id="title"></ion-searchbar>
 
       <ion-list>
-        <ion-item v-if="books==null">Kein Buch gefunden!</ion-item>
-        <ion-item
-
-            v-for="book in books"
-            :key="book.id"
-        >
+        <ion-item v-if="!books">Kein Buch gefunden!</ion-item>
+        <ion-item v-for="book in books" :key="book.id" :router-link="/detail/ + id"
+                  v-on:click="save(book.volumeInfo.title, book.volumeInfo.subtitle, book.volumeInfo.description)">
           <ion-thumbnail slot="start">
             <ion-img
                 :src="book.volumeInfo.imageLinks.thumbnail"
@@ -32,9 +32,6 @@
         </ion-item>
       </ion-list>
     </ion-content>
-
-    <ion-button expand="block" color="success" router-link='/show'>Save</ion-button>
-
   </ion-page>
 </template>
 
@@ -47,11 +44,12 @@ import {
   IonToolbar,
   IonItem,
   IonLabel,
-  IonButton,
   IonSearchbar,
   IonImg,
   IonList,
   IonThumbnail,
+  IonBackButton,
+  IonButtons
 } from '@ionic/vue';
 import axios from 'axios';
 
@@ -70,17 +68,17 @@ export default defineComponent({
     IonToolbar,
     IonItem,
     IonLabel,
-    IonButton,
     IonSearchbar,
     IonImg,
     IonList,
     IonThumbnail,
+    IonBackButton,
+    IonButtons
   },
   data() {
     return {
       enteredBook: "",
       books: null,
-      title: '',
       id: ''
     };
   },
@@ -89,16 +87,17 @@ export default defineComponent({
   },
 
   methods: {
-    save() {
+    save(title: string, subtitle: string, description: string) {
+
       const storage = new BookStorage();
       if (!this.id) {
         return;
       }
-      storage.setData(this.id, new Book(this.id, this.title, null, false));
+
+      storage.setData(this.id, new Book(this.id, title, subtitle, description, null, false));
     },
     resolveBook() {
       if (this.enteredBook.length < 3) {
-        console.log("didn't")
         this.books = null
         return
       }
@@ -108,7 +107,8 @@ export default defineComponent({
             if (response.status != 200 || response.data.totalItems == 0) {
               this.books = null
             } else
-              this.books = response.data.items
+              console.log(response.data.items.volumeInfo)
+            this.books = response.data.items
           })
           .catch(error => console.log(error))
     },

@@ -1,6 +1,8 @@
 interface BookInterface {
     id: string;
-    title: string | null;
+    title: string;
+    subtitle: string;
+    description: string;
     rating: number | null;
     finished: boolean;
 }
@@ -9,13 +11,17 @@ export {BookInterface};
 
 export default class Book implements BookInterface {
     public id: string;
-    public title: string | null;
+    public title: string;
+    public subtitle: string;
+    public description: string;
     public rating: number | null;
     public finished: boolean;
 
-    constructor(id: string, title: string | null, rating: number | null, finished: boolean) {
+    constructor(id: string, title: string, subtitle: string, description: string, rating: number | null, finished: boolean) {
         this.id = id;
         this.title = title;
+        this.subtitle = subtitle;
+        this.description = description;
         this.rating = rating;
         this.finished = finished;
     }

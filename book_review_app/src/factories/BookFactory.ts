@@ -5,6 +5,8 @@ export default class BookFactory {
         return new Book(
             json['id'],
             json['title'],
+            json['subtitle'],
+            json['description'],
             json['rating'],
             json['finished']
         );
