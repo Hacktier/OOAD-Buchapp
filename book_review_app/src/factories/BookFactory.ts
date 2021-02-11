@@ -5,10 +5,15 @@ export default class BookFactory {
         return new Book(
             json['id'],
             json['title'],
+            json['author'],
             json['subtitle'],
             json['description'],
+            json['finished'],
             json['rating'],
-            json['finished']
+            json['publishedDate'],
+            json['thumbnailUrl'],
+            json['pageCount'],
+
         );
     }
 }

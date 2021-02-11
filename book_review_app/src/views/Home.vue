@@ -54,6 +54,7 @@ addIcons({add, "cart-outline": cartOutline})
 import BookStorage from "@/service/BookStorage"
 import BookFactory from "@/factories/BookFactory";
 import Book from "@/model/Book";
+import BookRepository from "@/repository/BookRepository";
 
 export default defineComponent({
   name: 'Home',
@@ -75,9 +76,11 @@ export default defineComponent({
 
   data: () => ({
     books: [] as Book[],
+    repository: null as BookRepository | null
   }),
 
   async created() {
+    this.repository = new BookRepository();
     const storage = new BookStorage()
     const factory = new BookFactory();
 
