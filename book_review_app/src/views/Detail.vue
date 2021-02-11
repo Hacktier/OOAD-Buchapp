@@ -60,7 +60,6 @@ import {
 import {defineComponent} from 'vue';
 import BookStorage from "@/service/BookStorage"
 import Book from "@/model/Book";
-import BookFactory from "@/factories/BookFactory";
 
 export default defineComponent({
   name: 'Detail',
@@ -87,13 +86,9 @@ export default defineComponent({
 
   async created() {
     const id = this.$route.params['id'] as string;
-
     this.storage = new BookStorage()
-    const bookRaw = await this.storage.getData(id);
 
-    const bookFactory = new BookFactory();
-
-    this.book = bookFactory.createFromJson(JSON.parse(bookRaw.value ?? ''));
+    this.book = await this.storage.getSingle("user", id);
   },
 
   methods: {
@@ -102,7 +97,7 @@ export default defineComponent({
         return
       }
 
-      this.storage.deleteData(this.book.id);
+      this.storage.deleteSingle("user", this.book.id);
     },
 
     changeState() {
@@ -111,7 +106,7 @@ export default defineComponent({
       }
 
       this.book.finished = !this.book.finished;
-      this.storage.setData(this.book.id, this.book)
+      this.storage.updateData("user", this.book)
     }
   }
 });

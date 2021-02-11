@@ -46,9 +46,10 @@ import {
 } from '@ionic/vue';
 
 import {defineComponent} from 'vue';
-import { addIcons } from 'ionicons'
-import { add, cartOutline } from 'ionicons/icons'
-addIcons({ add, "cart-outline": cartOutline })
+import {addIcons} from 'ionicons'
+import {add, cartOutline} from 'ionicons/icons'
+
+addIcons({add, "cart-outline": cartOutline})
 
 import BookStorage from "@/service/BookStorage"
 import BookFactory from "@/factories/BookFactory";
@@ -80,12 +81,15 @@ export default defineComponent({
     const storage = new BookStorage()
     const factory = new BookFactory();
 
-    storage.getKeys().then(ids => {
-      for (const id of ids.keys) {
-        storage.getData(id).then(bookRaw => {
-          const book = JSON.parse(bookRaw.value ?? '');
-          this.books.push(factory.createFromJson(book));
-        })
+    storage.getData("user").then(bookRaw => {
+      if (!bookRaw.value) {
+        return;
+      }
+
+      const books = JSON.parse(bookRaw.value ?? '');
+
+      for (const book of books) {
+        this.books.push(factory.createFromJson(book));
       }
     })
   }

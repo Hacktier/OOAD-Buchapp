@@ -28,7 +28,6 @@
             <h3>{{ book.volumeInfo.subtitle }}</h3>
             <p>{{ book.volumeInfo.description }}</p>
           </ion-label>
-          <ion-label></ion-label>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -94,7 +93,7 @@ export default defineComponent({
         return;
       }
 
-      storage.setData(this.id, new Book(this.id, title, subtitle, description, null, false));
+      storage.setData("user", new Book(this.id, title, subtitle, description, null, false));
     },
     resolveBook() {
       if (this.enteredBook.length < 3) {
