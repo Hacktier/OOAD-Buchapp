@@ -61,6 +61,7 @@ import {defineComponent} from 'vue';
 import BookStorage from "@/service/BookStorage"
 import Book from "@/model/Book";
 import BookFactory from "@/factories/BookFactory";
+import BookRepository from "@/repository/BookRepository";
 
 export default defineComponent({
   name: 'Detail',
@@ -81,15 +82,16 @@ export default defineComponent({
 
   data: () => ({
     book: null as Book | null,
-    storage: null as BookStorage | null
+    storage: null as BookStorage | null,
+    repository: null as BookRepository | null
   }),
 
 
   async created() {
     const id = this.$route.params['id'] as string;
-
+  this.repository = new BookRepository();
     this.storage = new BookStorage()
-    const bookRaw = await this.storage.getData(id);
+    const bookRaw = await this.repository.getBook(id);
 
     const bookFactory = new BookFactory();
 
@@ -97,21 +99,25 @@ export default defineComponent({
   },
 
   methods: {
+
     deleteBook() {
-      if (!this.storage || !this.book) {
+      this.repository = new BookRepository();
+      BookRepository
+      if (!this.book) {
         return
       }
 
-      this.storage.deleteData(this.book.id);
+      this.repository?.deleteStoredBook(this.book.id);
     },
 
     changeState() {
-      if (!this.storage || !this.book) {
+      this.repository = new BookRepository();
+      if (!this.book) {
         return
       }
 
       this.book.finished = !this.book.finished;
-      this.storage.setData(this.book.id, this.book)
+      this.repository.storeBook(this.book.id, this.book)
     }
   }
 });

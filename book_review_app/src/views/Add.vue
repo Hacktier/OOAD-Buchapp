@@ -16,17 +16,17 @@
       <ion-list>
         <ion-item v-if="!books">Kein Buch gefunden!</ion-item>
         <ion-item v-for="book in books" :key="book.id" :router-link="/detail/ + id"
-                  v-on:click="save(book.volumeInfo.title, book.volumeInfo.subtitle, book.volumeInfo.description)">
+                  v-on:click="save(book.title, book.subtitle, book.author, book.description)">
           <ion-thumbnail slot="start">
             <ion-img
-                :src="book.volumeInfo.imageLinks.thumbnail"
-                :alt="book.volumeInfo.title">
+                :src="book.thumbnail"
+                :alt="book.title">
             </ion-img>
           </ion-thumbnail>
           <ion-label>
-            <h2>{{ book.volumeInfo.title }}</h2>
-            <h3>{{ book.volumeInfo.subtitle }}</h3>
-            <p>{{ book.volumeInfo.description }}</p>
+            <h2>{{ book.title }}</h2>
+            <h3>{{ book.subtitle }}</h3>
+            <p>{{ book.description }}</p>
           </ion-label>
           <ion-label></ion-label>
         </ion-item>
@@ -49,13 +49,13 @@ import {
   IonList,
   IonThumbnail,
   IonBackButton,
-  IonButtons
+  IonButtons,
 } from '@ionic/vue';
-import axios from 'axios';
 
 import {defineComponent} from 'vue';
 import Book from "@/model/Book";
 import BookStorage from "@/service/BookStorage";
+import BookRepository from "@/repository/BookRepository";
 import {v4 as uuidv4} from "uuid";
 
 export default defineComponent({
@@ -73,13 +73,14 @@ export default defineComponent({
     IonList,
     IonThumbnail,
     IonBackButton,
-    IonButtons
+    IonButtons,
   },
   data() {
     return {
       enteredBook: "",
-      books: null,
-      id: ''
+      books: '',
+      id: '',
+      repository: null as BookRepository | null
     };
   },
   created() {
@@ -87,30 +88,18 @@ export default defineComponent({
   },
 
   methods: {
-    save(title: string, subtitle: string, description: string) {
+    save(title: string, subtitle: string, author: string, description: string) {
 
-      const storage = new BookStorage();
+      this.repository = new BookRepository();
       if (!this.id) {
         return;
       }
 
-      storage.setData(this.id, new Book(this.id, title, subtitle, description, null, false));
+      this.repository.storeBook(this.id, new Book(this.id, title, subtitle, author, description, false, null));
     },
     resolveBook() {
-      if (this.enteredBook.length < 3) {
-        this.books = null
-        return
-      }
-      axios
-          .get('https://www.googleapis.com/books/v1/volumes' + '?q=' + this.enteredBook)
-          .then(response => {
-            if (response.status != 200 || response.data.totalItems == 0) {
-              this.books = null
-            } else
-              console.log(response.data.items.volumeInfo)
-            this.books = response.data.items
-          })
-          .catch(error => console.log(error))
+      this.repository = new BookRepository();
+      this.books=this.repository.fetchBooks(this.enteredBook)
     },
   }
 });
