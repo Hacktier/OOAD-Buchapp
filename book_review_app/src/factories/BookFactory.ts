@@ -13,7 +13,7 @@ export default class BookFactory {
             json['publishedDate'],
             json['thumbnailUrl'],
             json['pageCount'],
-
+            json['currentPage']
         );
     }
 }

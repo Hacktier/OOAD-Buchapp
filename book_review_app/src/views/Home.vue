@@ -9,13 +9,17 @@
     <ion-content>
       <ion-list>
         <ion-item :router-link="book.detailRoute" v-for="book in books" :key="book.title">
+          <ion-thumbnail slot="start" v-if="book.thumbnailUrl">
+            <ion-img
+                :src="book.thumbnailUrl"
+                :alt="book.title">
+            </ion-img>
+          </ion-thumbnail>
           <ion-label>
             <h2 v-text="book.title"></h2>
-            <ion-note>{{ book.subtitle }}</ion-note>
+            <ion-note v-text="book.subtitle"/>
           </ion-label>
-          <ion-badge :color="book.labelColor" slot="end">
-            {{ book.finishedReading }}
-          </ion-badge>
+          <ion-badge :color="book.labelColor" slot="end" v-text="book.finishedReading"/>
         </ion-item>
       </ion-list>
       <ion-fab vertical="bottom" horizontal="center" slot="fixed" router-link='/add'>
@@ -37,27 +41,27 @@ import {
   IonToolbar,
   IonLabel,
   IonItem,
-  IonNote,
   IonBadge,
   IonList,
   IonIcon,
   IonFab,
   IonFabButton,
+  IonImg,
+  IonThumbnail,
+  IonNote
 } from '@ionic/vue';
 
 import {defineComponent} from 'vue';
 import {addIcons} from 'ionicons'
 import {add, cartOutline} from 'ionicons/icons'
-
-addIcons({add, "cart-outline": cartOutline})
-
 import BookStorage from "@/service/BookStorage"
 import BookFactory from "@/factories/BookFactory";
 import Book from "@/model/Book";
-import BookRepository from "@/repository/BookRepository";
+
+addIcons({add, "cart-outline": cartOutline})
 
 export default defineComponent({
-  name: 'Home',
+
   components: {
     IonContent,
     IonHeader,
@@ -66,65 +70,28 @@ export default defineComponent({
     IonToolbar,
     IonLabel,
     IonItem,
-    IonNote,
     IonBadge,
     IonList,
     IonIcon,
     IonFab,
     IonFabButton,
+    IonImg,
+    IonThumbnail,
+    IonNote
   },
 
   data: () => ({
     books: [] as Book[],
-    repository: null as BookRepository | null
   }),
 
-  async created() {
-    this.repository = new BookRepository();
+  async ionViewWillEnter() {
     const storage = new BookStorage()
     const factory = new BookFactory();
+    const rawBooks = await storage.getAllByKey("user");
+    const books = JSON.parse(rawBooks.value ?? '') as Book[];
 
-    storage.getData("user").then(bookRaw => {
-      if (!bookRaw.value) {
-        return;
-      }
-
-      const books = JSON.parse(bookRaw.value ?? '');
-
-      for (const book of books) {
-        this.books.push(factory.createFromJson(book));
-      }
-    })
-  }
+    this.books = [];
+    this.books = books.map(book => factory.createFromJson(book));
+  },
 });
 </script>
-
-<style scoped>
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
-}
-</style>

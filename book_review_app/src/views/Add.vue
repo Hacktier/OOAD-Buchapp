@@ -3,30 +3,34 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button></ion-back-button>
+          <ion-back-button/>
         </ion-buttons>
-        <ion-title>Buch hinzufügen</ion-title>
+        <ion-title>Add Book</ion-title>
       </ion-toolbar>
     </ion-header>
 
-
     <ion-content>
-      <ion-searchbar v-model="enteredBook" @ionChange="resolveBook()" id="title"></ion-searchbar>
+      <ion-searchbar v-model="enteredBook" @ionChange="getBooks()" id="title"/>
 
       <ion-list>
-        <ion-item v-if="!books">Kein Buch gefunden!</ion-item>
-        <ion-item v-for="book in books" :key="book.id" :router-link="/detail/ + id"
-                  v-on:click="save(book.volumeInfo.title, book.volumeInfo.subtitle, book.volumeInfo.description)">
-          <ion-thumbnail slot="start">
+        <ion-item v-if="!books">No books found!</ion-item>
+        <!-- TODO: Bitte bei router-link um das "/detail/" noch Anführungszeichen. Das ist ein bisschen Hacky so. Oder gleich Template Literals: `/detail/${id}` -->
+
+        <ion-item v-for="book in books"
+                  :key="book.id"
+                  :router-link="/detail/ + id"
+                  @click="save(book.title, book.author, book.subtitle,book.description, book.publishedDate, book.thumbnailUrl,book.pageCount)"
+        >
+          <ion-thumbnail slot="start" v-if="book.thumbnailUrl">
             <ion-img
-                :src="book.volumeInfo.imageLinks.thumbnail"
-                :alt="book.volumeInfo.title">
+                :src="book.thumbnailUrl"
+                :alt="book.title">
             </ion-img>
           </ion-thumbnail>
           <ion-label>
-            <h2>{{ book.volumeInfo.title }}</h2>
-            <h3>{{ book.volumeInfo.subtitle }}</h3>
-            <p>{{ book.volumeInfo.description }}</p>
+            <h2 v-text="book.title"/>
+            <h3 v-text="book.subtitle"/>
+            <p v-text="book.description"/>
           </ion-label>
         </ion-item>
       </ion-list>
@@ -50,15 +54,14 @@ import {
   IonBackButton,
   IonButtons
 } from '@ionic/vue';
-import axios from 'axios';
-
 import {defineComponent} from 'vue';
 import Book from "@/model/Book";
 import BookStorage from "@/service/BookStorage";
 import {v4 as uuidv4} from "uuid";
+import BookRepository from "@/repositories/BookRepository";
+import BookRepositoryFactory from "@/factories/BookRepositoryFactory";
 
 export default defineComponent({
-  name: 'Add',
   components: {
     IonContent,
     IonHeader,
@@ -74,47 +77,58 @@ export default defineComponent({
     IonBackButton,
     IonButtons
   },
-  data() {
-    return {
-      enteredBook: "",
-      books: null,
-      id: ''
-    };
-  },
+
+  data: () => ({
+    enteredBook: '',
+    books: [] as Book[] | null,
+    id: '',
+    repository: null as BookRepository | null
+  }),
+
   created() {
     this.id = uuidv4();
   },
 
   methods: {
-    save(title: string, subtitle: string, description: string) {
-
+    // TODO: Jedes Attribut eine Zeile
+    // TODO Typehint vergessen
+    save(
+        title: string,
+        author: string,
+        subtitle: string,
+        description: string,
+        publishedDate: number,
+        thumbnailUrl: string,
+        pageCount: number
+    ) {
       const storage = new BookStorage();
-      if (!this.id) {
+      storage.set(
+          "user",
+          new Book(
+              this.id,
+              title,
+              author,
+              subtitle,
+              description,
+              false,
+              null,
+              publishedDate,
+              thumbnailUrl,
+              pageCount
+          )
+      );
+    },
+
+    // TODO: Promise<Array<Book>>  return type
+    async getBooks(){
+      if (this.enteredBook.length < 3) {
+        this.books = null;
         return;
       }
 
-      storage.setData("user", new Book(this.id, title, subtitle, description, null, false));
-    },
-    resolveBook() {
-      if (this.enteredBook.length < 3) {
-        this.books = null
-        return
-      }
-      axios
-          .get('https://www.googleapis.com/books/v1/volumes' + '?q=' + this.enteredBook)
-          .then(response => {
-            if (response.status != 200 || response.data.totalItems == 0) {
-              this.books = null
-            } else
-              console.log(response.data.items.volumeInfo)
-            this.books = response.data.items
-          })
-          .catch(error => console.log(error))
-    },
+      this.repository = new BookRepositoryFactory().create();
+      this.books = await this.repository.search(this.enteredBook);
+    }
   }
 });
 </script>
-
-<style scoped>
-
-</style>

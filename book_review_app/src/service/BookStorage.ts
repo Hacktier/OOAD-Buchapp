@@ -5,8 +5,8 @@ import BookFactory from "@/factories/BookFactory";
 const { Storage } = Plugins
 
 export default class BookStorage {
-    async setData(key: string, value: Book) {
-        const rawExisting = await this.getData(key);
+    async set(key: string, value: Book) {
+        const rawExisting = await this.getAllByKey(key);
 
         if (!rawExisting.value) {
             await Storage.set({
@@ -27,25 +27,21 @@ export default class BookStorage {
 
     }
 
-    async getData(key: string) {
+    async getAllByKey(key: string) {
         return await Storage.get({key});
     }
 
     async getSingle(key: string, id: string) {
-        const factory = new BookFactory();
-        const rawBooks = await this.getData("user");
+        const rawBooks = await this.getAllByKey(key);
 
         if (!rawBooks.value) {
             return null;
         }
 
         const book = JSON.parse(rawBooks.value).filter((rawBook: Book) => rawBook.id === id);
+        const factory = new BookFactory();
 
-        if (!book) {
-            return null;
-        }
-
-        return factory.createFromJson(book[0]);
+        return book ? factory.createFromJson(book[0]) : null;
     }
 
     async getKeys() {
@@ -53,7 +49,7 @@ export default class BookStorage {
     }
 
     async deleteSingle(key: string, id: string) {
-        const booksRaw = await this.getData(key);
+        const booksRaw = await this.getAllByKey(key);
 
         if (!booksRaw.value) {
             return null;
@@ -69,8 +65,8 @@ export default class BookStorage {
         });
     }
 
-    async updateData(key: string, book: Book) {
-        const booksRaw = await this.getData(key);
+    async updateSingle(key: string, book: Book) {
+        const booksRaw = await this.getAllByKey(key);
 
         if (!booksRaw.value) {
             return null;
@@ -84,9 +80,5 @@ export default class BookStorage {
             key,
             value: JSON.stringify(existing)
         });
-    }
-
-    async deleteData(key: string) {
-        await Storage.remove({key});
     }
 }

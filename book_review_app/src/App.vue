@@ -9,6 +9,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+  // Name kann weg
   name: 'App',
   components: {
     IonApp,
