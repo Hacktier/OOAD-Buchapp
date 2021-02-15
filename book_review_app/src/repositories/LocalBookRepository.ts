@@ -1,10 +1,10 @@
-import BookRepository from "@/repositories/BookRepository";
+import BookRepositoryInterface from "@/repositories/BookRepositoryInterface";
 import Book from "@/model/Book";
 import {v4 as uuidv4} from "uuid";
 
-export default class LocalBookRepository implements BookRepository {
+export default class LocalBookRepository implements BookRepositoryInterface {
     // private
-    public original: BookRepository;
+    public original: BookRepositoryInterface;
     private static instance: LocalBookRepository;
     private readonly localBooks: Array<Book> = [
         new Book(uuidv4(), "Skulduggery Pleasant 1", "Derek Landy", "Der Gentleman mit der Feuerhand", "Eine Kleinigkeit wie der Tod wird ihn nicht aufhalten! Er ist kein gewöhnlicher Detektiv. Er ist Zauberer und Meister der kleinen schmutzigen Tricks, und wenn die Umstände es erfordern, nimmt er es mit dem Gesetz nicht so genau. Er ist ein echter Gentleman. Und ... er ist ein Skelett. Als Stephanie Skulduggery Pleasant das erste Mal sieht, ahnt sie noch nicht, dass sie ausgerechnet mit ihm eines ihrer größten Abenteuer erleben wird. Denn um den mysteriösen Tod ihres Onkels aufzuklären, muss sie Skulduggery in eine Welt voller Magie begleiten", false, null, 2007, null, 352),
@@ -19,12 +19,12 @@ export default class LocalBookRepository implements BookRepository {
         new Book(uuidv4(), "Odessa", "Peter van Olmen", "und die geheime Welt der Bücher", "Durch ein geheimnisvolles Portal gelangt die zwölfjährige Odessa in die Dichterstadt Scribopolis, in der nur berühmte Schriftsteller leben. Odessa hofft, hier ihren geliebten Vater zu finden. Doch stattdessen gerät sie in ein unglaubliches Abenteuer, in dessen Mittelpunkt das magische Buchus steht, das sie zufällig entdeckt hat. Was in ihm geschrieben steht, wird tatsächlich geschehen. Mabarak, ein finsterer Schriftsteller, und seine Verbündeten setzen alles daran, in den Besitz des Buchus zu gelangen. Odessa scheint ihren Vater nur finden zu können, wenn sie in das Herz der Verschwörung vorstößt …", false, null, 2009, null, 539)
     ];
 
-    private constructor(original: BookRepository) {
+    private constructor(original: BookRepositoryInterface) {
         this.original = original;
         LocalBookRepository.instance = this;
     }
 
-    public static getInstance(original: BookRepository): LocalBookRepository {
+    public static getInstance(original: BookRepositoryInterface): LocalBookRepository {
         return LocalBookRepository.instance ?? new LocalBookRepository(original);
     }
 

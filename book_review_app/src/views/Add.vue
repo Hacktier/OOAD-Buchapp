@@ -58,7 +58,7 @@ import {defineComponent} from 'vue';
 import Book from "@/model/Book";
 import BookStorage from "@/service/BookStorage";
 import {v4 as uuidv4} from "uuid";
-import BookRepository from "@/repositories/BookRepository";
+import BookRepositoryInterface from "@/repositories/BookRepositoryInterface";
 import BookRepositoryFactory from "@/factories/BookRepositoryFactory";
 
 export default defineComponent({
@@ -82,7 +82,7 @@ export default defineComponent({
     enteredBook: '',
     books: [] as Book[] | null,
     id: '',
-    repository: null as BookRepository | null
+    repository: null as BookRepositoryInterface | null
   }),
 
   created() {
@@ -90,7 +90,6 @@ export default defineComponent({
   },
 
   methods: {
-    // TODO: Jedes Attribut eine Zeile
     // TODO Typehint vergessen
     save(
         title: string,

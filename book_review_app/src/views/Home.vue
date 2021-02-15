@@ -2,14 +2,16 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>Book Review</ion-title>
+        <ion-title>Overview</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
       <ion-list>
-        <ion-item :router-link="book.detailRoute" v-for="book in books" :key="book.title">
-          <ion-thumbnail slot="start" v-if="book.thumbnailUrl">
+        <ion-item :router-link="book.detailRoute"
+                  v-for="book in books"
+                  :key="book.title">
+          <ion-thumbnail slot="start" v-if="book.thumbnailUrl"> <!--//TODO als Template weil selber code in Home und Detail-->
             <ion-img
                 :src="book.thumbnailUrl"
                 :alt="book.title">

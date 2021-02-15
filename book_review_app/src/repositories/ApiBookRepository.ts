@@ -1,32 +1,30 @@
 import Book from "@/model/Book";
 import axios from "axios";
-import BookRepository from "@/repositories/BookRepository";
+import BookRepositoryInterface from "@/repositories/BookRepositoryInterface";
 import {v4 as uuidv4} from "uuid";
 
-interface ApiBooksInterface {
+interface ApiBookInterface {
     id: string;
     volumeInfo: {
         title: string;
         authors: { toString: () => string };
-        subtitle: string | null;
+        subtitle: string;
         description: string;
         // TODO: Prüfen ob das wirklich undefined ist oder null. Normalerweise geben
         // APIS immer das gleiche Schema zurück und es ist schwer zu glauben, dass die
         // Google API einfach Einträge weglässt
-        published_date: number | undefined;
+        published_date: number;
         // TODO: Siehe oben
-        imageLinks: { smallThumbnail: string | undefined };
+        imageLinks: { smallThumbnail: string};
         // TODO: Siehe oben
-        pageCount: number | undefined;
-        // TODO: any NIEMALS nutzen. Bitte genauen Typ definieren /!\
-        // TODO: Thumbnail_url eine Zeile tiefer
+        pageCount: number;
     };
-    thumbnail_url: any;
+    thumbnail_url: string;
 }
 
-export {ApiBooksInterface};
+export {ApiBookInterface};
 
-export class ApiBookRepository implements BookRepository {
+export class ApiBookRepository implements BookRepositoryInterface {
     private static instance: ApiBookRepository;
 
     private constructor() {
@@ -46,7 +44,7 @@ export class ApiBookRepository implements BookRepository {
 
         return axios
             // TODO: Template Lirerual verwenden: `https://…………${term}`
-            .get('https://www.googleapis.com/books/v1/volumes?q=' + term)
+            .get('https://www.googleapis.com/books/v1/volumes?q=' + term + "&key=AIzaSyAjaGcNFIrzyDnJ1NxqfyUPjwqQ07QTr-A")
             .then(response => {
                 if (response.status !== 200 || response.data.totalItems == 0) {
                     return [];
@@ -54,7 +52,7 @@ export class ApiBookRepository implements BookRepository {
 
                 const foundBooks = response.data.items;
                 foundBooks.forEach(
-                    (book: ApiBooksInterface) => {
+                    (book: ApiBookInterface) => {
                         matchingBooks.push(
                             new Book(
                                 uuidv4(),

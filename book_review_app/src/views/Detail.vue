@@ -18,10 +18,10 @@
                 :alt="book.title">
             </ion-img>
           </ion-thumbnail>
-          <ion-label class="ion-text-wrap" v-if="book.title" v-text="book.title"/>
-        </ion-item>
-        <ion-item v-if="book.subtitle">
-          <ion-label class="ion-text-wrap" v-text="book.subtitle"/>
+          <ion-label>
+            <h2 v-text="book.title"></h2>
+            <ion-note v-text="book.subtitle"/>
+          </ion-label>
         </ion-item>
         <ion-item v-if="book.author">
           <ion-label v-text="book.author"/>
