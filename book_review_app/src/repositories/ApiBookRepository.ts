@@ -10,13 +10,8 @@ interface ApiBookInterface {
         authors: { toString: () => string };
         subtitle: string;
         description: string;
-        // TODO: Prüfen ob das wirklich undefined ist oder null. Normalerweise geben
-        // APIS immer das gleiche Schema zurück und es ist schwer zu glauben, dass die
-        // Google API einfach Einträge weglässt
         published_date: number;
-        // TODO: Siehe oben
         imageLinks: { smallThumbnail: string};
-        // TODO: Siehe oben
         pageCount: number;
     };
     thumbnail_url: string;
@@ -43,8 +38,7 @@ export class ApiBookRepository implements BookRepositoryInterface {
         const matchingBooks: Book[] = [];
 
         return axios
-            // TODO: Template Lirerual verwenden: `https://…………${term}`
-            .get('https://www.googleapis.com/books/v1/volumes?q=' + term + "&key=AIzaSyAjaGcNFIrzyDnJ1NxqfyUPjwqQ07QTr-A")
+            .get(`https://www.googleapis.com/books/v1/volumes?q=${term}&key=AIzaSyAjaGcNFIrzyDnJ1NxqfyUPjwqQ07QTr-A`)
             .then(response => {
                 if (response.status !== 200 || response.data.totalItems == 0) {
                     return [];

@@ -12,8 +12,6 @@ import '@ionic/vue/css/normalize.css';
 import '@ionic/vue/css/structure.css';
 import '@ionic/vue/css/typography.css';
 
-/* Optional CSS utils that can be commented out */
-// TODO: Hier einmal prüfen, was davon ihr nicht braucht und es dann entfernen. Wird eurer JS / CSS um einiges verkleinern
 import '@ionic/vue/css/padding.css';
 import '@ionic/vue/css/float-elements.css';
 import '@ionic/vue/css/text-alignment.css';

@@ -2,9 +2,10 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button default-href="/home"></ion-back-button>
-        </ion-buttons>
+        <ion-button fill="clear" router-link='/home' slot="start">
+          <ion-icon name="chevron-back"/>
+          Back
+        </ion-button>
         <ion-title>Detail View</ion-title>
       </ion-toolbar>
     </ion-header>
@@ -77,26 +78,22 @@ import {
   IonToolbar,
   IonButton,
   IonFooter,
-  IonBackButton,
-  IonButtons,
   IonImg,
   IonThumbnail,
-  IonInput
+  IonInput,
+  IonNote,
+  IonIcon
+
 } from '@ionic/vue';
 import {defineComponent} from 'vue';
 import BookStorage from "@/service/BookStorage"
 import Book from "@/model/Book";
+import {cartOutline, chevronBack} from 'ionicons/icons';
+import {addIcons} from "ionicons";
+
+addIcons({chevronBack, "cart-outline": cartOutline})
 
 export default defineComponent({
-
-  ionViewWillLeave() {
-    if (!this.storage || !this.book) {
-      return;
-    }
-
-    this.storage.updateSingle("user", this.book)
-  },
-
   components: {
     IonContent,
     IonHeader,
@@ -108,11 +105,11 @@ export default defineComponent({
     IonList,
     IonButton,
     IonFooter,
-    IonBackButton,
-    IonButtons,
     IonImg,
     IonThumbnail,
-    IonInput
+    IonInput,
+    IonNote,
+    IonIcon,
   },
 
   data: () => ({
@@ -120,24 +117,31 @@ export default defineComponent({
     storage: null as BookStorage | null
   }),
 
-
-  async created() {
+  async ionViewWillEnter() {
     const id = this.$route.params["id"] as string;
     this.storage = new BookStorage()
-
     this.book = await this.storage.getSingle("user", id);
   },
 
+  ionViewWillLeave() {
+    if (!this.storage || !this.book) {
+      return;
+    }
+
+    this.storage.updateSingle("user", this.book)
+  },
+
   methods: {
-    deleteBook() {
+    deleteBook(): void {
       if (!this.storage || !this.book) {
         return;
       }
 
       this.storage.deleteSingle("user", this.book.id);
+      this.book = null;
     },
 
-    changeState() {
+    changeState(): void {
       if (!this.storage || !this.book) {
         return;
       }

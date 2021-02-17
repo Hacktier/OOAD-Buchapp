@@ -3,6 +3,9 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-title>Overview</ion-title>
+        <ion-button fill="clear" router-link='/home' slot="end" @click="deleteAll">
+          <ion-icon name="trash"/>
+        </ion-button>
       </ion-toolbar>
     </ion-header>
 
@@ -11,7 +14,7 @@
         <ion-item :router-link="book.detailRoute"
                   v-for="book in books"
                   :key="book.title">
-          <ion-thumbnail slot="start" v-if="book.thumbnailUrl"> <!--//TODO als Template weil selber code in Home und Detail-->
+          <ion-thumbnail slot="start" v-if="book.thumbnailUrl">
             <ion-img
                 :src="book.thumbnailUrl"
                 :alt="book.title">
@@ -50,17 +53,19 @@ import {
   IonFabButton,
   IonImg,
   IonThumbnail,
-  IonNote
+  IonNote,
+  IonButton
 } from '@ionic/vue';
 
 import {defineComponent} from 'vue';
-import {addIcons} from 'ionicons'
-import {add, cartOutline} from 'ionicons/icons'
+
 import BookStorage from "@/service/BookStorage"
 import BookFactory from "@/factories/BookFactory";
 import Book from "@/model/Book";
+import {addIcons} from "ionicons";
+import {cartOutline, trash, add} from "ionicons/icons";
 
-addIcons({add, "cart-outline": cartOutline})
+addIcons({trash, add, "cart-outline": cartOutline,})
 
 export default defineComponent({
 
@@ -79,21 +84,30 @@ export default defineComponent({
     IonFabButton,
     IonImg,
     IonThumbnail,
-    IonNote
+    IonNote,
+    IonButton
   },
 
   data: () => ({
     books: [] as Book[],
   }),
 
-  async ionViewWillEnter() {
+  async ionViewDidEnter() {
     const storage = new BookStorage()
     const factory = new BookFactory();
     const rawBooks = await storage.getAllByKey("user");
-    const books = JSON.parse(rawBooks.value ?? '') as Book[];
 
-    this.books = [];
-    this.books = books.map(book => factory.createFromJson(book));
+    if (rawBooks.value) {
+      const books = JSON.parse(rawBooks.value ?? '') as Book[];
+      this.books = books.map(book => factory.createFromJson(book));
+    }
   },
+  methods: {
+    async deleteAll(): Promise<void> {
+      const storage = new BookStorage()
+      await storage.deleteAll();
+      window.location.reload();
+    }
+  }
 });
 </script>

@@ -5,7 +5,7 @@ import BookFactory from "@/factories/BookFactory";
 const { Storage } = Plugins
 
 export default class BookStorage {
-    async set(key: string, value: Book) {
+    async set(key: string, value: Book): Promise<void> {
         const rawExisting = await this.getAllByKey(key);
 
         if (!rawExisting.value) {
@@ -27,11 +27,11 @@ export default class BookStorage {
 
     }
 
-    async getAllByKey(key: string) {
+    async getAllByKey(key: string): Promise<{ value: string | null }> {
         return await Storage.get({key});
     }
 
-    async getSingle(key: string, id: string) {
+    async getSingle(key: string, id: string): Promise<Book | null>{
         const rawBooks = await this.getAllByKey(key);
 
         if (!rawBooks.value) {
@@ -44,15 +44,15 @@ export default class BookStorage {
         return book ? factory.createFromJson(book[0]) : null;
     }
 
-    async getKeys() {
+    async getKeys(): Promise<{ keys: string[] }> {
         return await Storage.keys();
     }
 
-    async deleteSingle(key: string, id: string) {
+    async deleteSingle(key: string, id: string): Promise<void> {
         const booksRaw = await this.getAllByKey(key);
 
         if (!booksRaw.value) {
-            return null;
+            return;
         }
 
         const existing = JSON.parse(booksRaw.value);
@@ -65,11 +65,11 @@ export default class BookStorage {
         });
     }
 
-    async updateSingle(key: string, book: Book) {
+    async updateSingle(key: string, book: Book): Promise<void> {
         const booksRaw = await this.getAllByKey(key);
 
         if (!booksRaw.value) {
-            return null;
+            return;
         }
 
         const existing = JSON.parse(booksRaw.value);
@@ -80,5 +80,9 @@ export default class BookStorage {
             key,
             value: JSON.stringify(existing)
         });
+    }
+
+    async deleteAll(): Promise<void> {
+        await Storage.clear();
     }
 }

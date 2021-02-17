@@ -6,9 +6,9 @@ interface BookInterface {
     description: string;
     finished: boolean;
     rating: number | null;
-    publishedDate?: number;
-    thumbnailUrl?: string | null;
-    pageCount?: number;
+    publishedDate: number;
+    thumbnailUrl: string | null;
+    pageCount: number;
     currentPage: number;
 }
 
@@ -22,22 +22,11 @@ export default class Book implements BookInterface {
     public description: string;
     public finished: boolean;
     public rating: number | null;
-    // TODO: "?:" markiert eine eine Varaible als undefined. Generell ist es besser einheitlich zu bleiben und null
-    // zu nutzen, damit man direkt erkennt was nicht gesetzt ist und wirklich nicht definiert ist. Eigentlich sollte
-    // man undefined generell nicht selber nutzen (ohne guten Grund). Also hier bessser: "publishedData: number|null" o.ä.
-    // Gilt für alle folgenden
-    public publishedDate?: number;
-    public thumbnailUrl?: string | null;
-    public pageCount?: number;
+    public publishedDate: number;
+    public thumbnailUrl: string | null;
+    public pageCount: number;
     public currentPage: number;
 
-    // TODO: Jeden Parameter in eigene Zeile, als:
-    // constructor(
-    //      id: string,
-    //      ……
-    // ) {
-    //
-    //
     constructor(
         id: string,
         title: string,
@@ -46,11 +35,10 @@ export default class Book implements BookInterface {
         description: string,
         finished: boolean,
         rating: number | null,
-        publishedDate?: number,
-        thumbnailUrl?: string | null,
-        pageCount?: number,
-        currentPage = 0)
-    {
+        publishedDate: number,
+        thumbnailUrl: string | null,
+        pageCount: number,
+        currentPage = 0) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -88,8 +76,7 @@ export default class Book implements BookInterface {
         return 'primary';
     }
 
-    get detailRoute(): string{
-        // TODO: Template Literal verwenden: return `/detail/${this.id}`
-        return '/detail/' + this.id;
+    get detailRoute(): string {
+        return `/detail/${this.id}`;
     }
 }

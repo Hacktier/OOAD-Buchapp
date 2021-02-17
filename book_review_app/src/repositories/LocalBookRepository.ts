@@ -3,7 +3,6 @@ import Book from "@/model/Book";
 import {v4 as uuidv4} from "uuid";
 
 export default class LocalBookRepository implements BookRepositoryInterface {
-    // private
     public original: BookRepositoryInterface;
     private static instance: LocalBookRepository;
     private readonly localBooks: Array<Book> = [
@@ -29,6 +28,10 @@ export default class LocalBookRepository implements BookRepositoryInterface {
     }
 
     async search(term: string): Promise<Array<Book>> {
+        if (term.length < 3) {
+            return [];
+        }
+
         const matchingBooks: Book[] = [];
 
         this.localBooks
