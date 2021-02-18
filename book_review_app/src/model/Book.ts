@@ -1,13 +1,13 @@
 interface BookInterface {
     id: string;
     title: string;
-    author: string | null;
-    subtitle: string | null;
+    author: string;
+    subtitle: string;
     description: string;
     finished: boolean;
     rating: number | null;
     publishedDate: number;
-    thumbnailUrl: string | null;
+    thumbnailUrl: string;
     pageCount: number;
     currentPage: number;
 }
@@ -17,28 +17,29 @@ export {BookInterface};
 export default class Book implements BookInterface {
     public id: string;
     public title: string;
-    public author: string | null;
-    public subtitle: string | null;
+    public author: string;
+    public subtitle: string;
     public description: string;
     public finished: boolean;
     public rating: number | null;
     public publishedDate: number;
-    public thumbnailUrl: string | null;
+    public thumbnailUrl: string;
     public pageCount: number;
     public currentPage: number;
 
     constructor(
         id: string,
         title: string,
-        author: string | null,
-        subtitle: string | null,
+        author: string,
+        subtitle: string,
         description: string,
         finished: boolean,
         rating: number | null,
         publishedDate: number,
-        thumbnailUrl: string | null,
+        thumbnailUrl: string,
         pageCount: number,
-        currentPage = 0) {
+        currentPage = 0)
+    {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -76,7 +77,7 @@ export default class Book implements BookInterface {
         return 'primary';
     }
 
-    get detailRoute(): string {
+    get detailRoute(): string{
         return `/detail/${this.id}`;
     }
 }
