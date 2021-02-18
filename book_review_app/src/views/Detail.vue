@@ -1,3 +1,6 @@
+// Verantwortlich: Markus Kapp
+// Mitwirkend: Jonas Nelson
+
 <template>
   <ion-page>
     <ion-header :translucent="true">

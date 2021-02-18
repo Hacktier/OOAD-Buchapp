@@ -1,3 +1,6 @@
+// Verantwortlich: Jonas Nelson
+// Mitwirkend: Markus Kapp
+
 import Book from "@/model/Book";
 import axios from "axios";
 import BookRepositoryInterface from "@/repositories/BookRepositoryInterface";

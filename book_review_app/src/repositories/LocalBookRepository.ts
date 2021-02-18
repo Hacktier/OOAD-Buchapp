@@ -1,3 +1,6 @@
+// Verantwortlich: Markus Kapp
+// Mitwirkend: Jonas Nelson
+
 import BookRepositoryInterface from "@/repositories/BookRepositoryInterface";
 import Book from "@/model/Book";
 import {v4 as uuidv4} from "uuid";

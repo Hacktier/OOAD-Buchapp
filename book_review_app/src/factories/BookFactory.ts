@@ -1,3 +1,6 @@
+// Verantwortlich: Jonas Nelson
+// Mitwirkend: Markus Kapp
+
 import Book, {BookInterface} from "@/model/Book";
 
 export default class BookFactory {

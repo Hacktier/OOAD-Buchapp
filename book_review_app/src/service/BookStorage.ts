@@ -1,3 +1,6 @@
+// Verantwortlich: Markus Kapp
+// Mitwirkend: Jonas Nelson
+
 import Book from "@/model/Book";
 import {Plugins} from "@capacitor/core";
 import BookFactory from "@/factories/BookFactory";
